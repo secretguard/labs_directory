@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labs — Sarath G</title>
+<meta name="description" content="Hands-on security labs, demos, and tools built by Sarath G. OSINT, API security, SOC monitoring, social engineering, and more — free to use.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bench-black:#0d0f0e;
+    --panel:#151916;
+    --panel-border:#262b27;
+    --steel:#8a9690;
+    --steel-dim:#5b645f;
+    --signal:#ffb454;
+    --signal-dim:#7a5a2c;
+    --paper:#e8e6df;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--bench-black);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  a{color:inherit;text-decoration:none;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    border-bottom:1px solid var(--panel-border);
+    padding:18px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky;
+    top:0;
+    background:rgba(13,15,14,0.92);
+    backdrop-filter:blur(6px);
+    z-index:50;
+  }
+
+  .topbar .brand{
+    font-family:'JetBrains Mono',monospace;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    color:var(--paper);
+  }
+
+  .topbar .brand span{color:var(--signal);}
+
+  .topbar .home-link{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--steel);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--panel-border);
+    padding:7px 12px;
+    border-radius:3px;
+    transition:border-color 0.15s,color 0.15s;
+  }
+
+  .topbar .home-link:hover{
+    border-color:var(--steel-dim);
+    color:var(--paper);
+  }
+
+  /* ---------- hero / manifest header ---------- */
+  .manifest-header{
+    max-width:920px;
+    margin:0 auto;
+    padding:64px 32px 40px;
+  }
+
+  .manifest-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--signal);
+    letter-spacing:0.08em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+  }
+
+  .manifest-tag .dot{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--signal);
+    display:inline-block;
+  }
+
+  .manifest-header h1{
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(28px,4vw,40px);
+    font-weight:600;
+    line-height:1.25;
+    color:var(--paper);
+    margin-bottom:16px;
+    max-width:640px;
+  }
+
+  .manifest-header p{
+    color:var(--steel);
+    font-size:16px;
+    max-width:620px;
+  }
+
+  /* ---------- filter bar ---------- */
+  .filter-bar{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 32px 48px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .filter-pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.03em;
+    color:var(--steel);
+    border:1px solid var(--panel-border);
+    background:transparent;
+    padding:8px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:all 0.15s;
+  }
+
+  .filter-pill:hover{
+    border-color:var(--steel-dim);
+    color:var(--paper);
+  }
+
+  .filter-pill.active{
+    border-color:var(--signal);
+    color:var(--signal);
+    background:rgba(255,180,84,0.07);
+  }
+
+  /* ---------- sections ---------- */
+  .lab-section{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 32px 56px;
+  }
+
+  .section-rule{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:24px;
+  }
+
+  .section-rule .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    color:var(--steel);
+    white-space:nowrap;
+  }
+
+  .section-rule .line{
+    flex:1;
+    height:1px;
+    background:var(--panel-border);
+  }
+
+  .section-rule .count{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--steel-dim);
+  }
+
+  .lab-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  }
+
+  /* ---------- card ---------- */
+  .lab-card{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:4px;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:border-color 0.15s,transform 0.15s;
+  }
+
+  .lab-card:hover{
+    border-color:var(--steel-dim);
+    transform:translateY(-2px);
+  }
+
+  .lab-card .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .lab-card .lab-id{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--steel-dim);
+    letter-spacing:0.04em;
+  }
+
+  .lab-card .status-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.04em;
+    color:var(--signal);
+    border:1px solid var(--signal-dim);
+    padding:3px 8px;
+    border-radius:2px;
+    white-space:nowrap;
+  }
+
+  .lab-card h3{
+    font-family:'JetBrains Mono',monospace;
+    font-size:17px;
+    font-weight:600;
+    color:var(--paper);
+    line-height:1.3;
+  }
+
+  .lab-card p{
+    color:var(--steel);
+    font-size:13.5px;
+    line-height:1.55;
+    flex:1;
+  }
+
+  .lab-card .card-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-top:8px;
+    border-top:1px solid var(--panel-border);
+  }
+
+  .lab-card .stack{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--steel-dim);
+  }
+
+  .lab-card .go{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--paper);
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  .lab-card:hover .go{color:var(--signal);}
+
+  /* ---------- footer ---------- */
+  footer{
+    max-width:920px;
+    margin:0 auto;
+    padding:32px 32px 64px;
+    border-top:1px solid var(--panel-border);
+    margin-top:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+
+  footer .mono{
+    font-size:12px;
+    color:var(--steel-dim);
+  }
+
+  footer a:hover{color:var(--signal);}
+
+  @media (max-width:600px){
+    .topbar{padding:16px 20px;}
+    .manifest-header{padding:48px 20px 32px;}
+    .filter-bar{padding:0 20px 36px;}
+    .lab-section{padding:0 20px 44px;}
+    footer{padding:28px 20px 48px;}
+  }
+
+  .hidden{display:none !important;}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">labs<span>.</span>sarathg<span>.</span>me</div>
+  <a class="home-link" href="https://www.sarathg.me" target="_blank" rel="noopener">&larr; main site</a>
+</div>
+
+<header class="manifest-header">
+  <div class="manifest-tag"><span class="dot"></span>9 LABS LOGGED &mdash; LIVE</div>
+  <h1>Hands-on security labs, built to be broken.</h1>
+  <p>This site contains the vulnerable applications and learning environments I have created over the years, along with those I will create in the future.</p>
+  <p style="margin-top:14px;">All labs are free, open source, and include their source code. Feel free to use them, modify them, and incorporate them into your own learning environments, training programs, or experiments.</p>
+</header>
+
+<div class="filter-bar mono" id="filterBar">
+  <button class="filter-pill active" data-filter="all">ALL</button>
+  <button class="filter-pill" data-filter="vulnerable-apps">VULNERABLE APPS</button>
+  <button class="filter-pill" data-filter="interactive">INTERACTIVE TOOLS</button>
+  <button class="filter-pill" data-filter="awareness">AWARENESS DEMOS</button>
+  <button class="filter-pill" data-filter="automation">AUTOMATION</button>
+  <button class="filter-pill" data-filter="other">OTHER</button>
+</div>
+
+<!-- VULNERABLE APPS -->
+<section class="lab-section" data-category="vulnerable-apps">
+  <div class="section-rule">
+    <span class="label mono">VULNERABLE APPS</span>
+    <span class="line"></span>
+    <span class="count mono">02</span>
+  </div>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="https://www.sarathg.me/shopeasy.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-001</span>
+        <span class="status-tag">VULNERABLE APP</span>
+      </div>
+      <h3>API Security Lab — ShopEasy</h3>
+      <p>Two versions of the same e-commerce app — one vulnerable, one fixed. Attack BOLA, JWT flaws, broken auth, and debug leaks, then see exactly what secure code does differently.</p>
+      <div class="card-bottom">
+        <span class="stack">API Security · OWASP</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="https://www.sarathg.me/wazuh.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-002</span>
+        <span class="status-tag">VULNERABLE ENVIRONMENT</span>
+      </div>
+      <h3>SOC Lab — Wazuh Log Monitoring</h3>
+      <p>A complete SOC home lab guide using Wazuh on VirtualBox. Deploy the OVA, connect a Windows agent, run Kali attacks, and detect everything in the dashboard — no licence, no cloud, free forever.</p>
+      <div class="card-bottom">
+        <span class="stack">Blue Team · Detection</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- INTERACTIVE LEARNING TOOLS -->
+<section class="lab-section" data-category="interactive">
+  <div class="section-rule">
+    <span class="label mono">INTERACTIVE LEARNING TOOLS</span>
+    <span class="line"></span>
+    <span class="count mono">03</span>
+  </div>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="https://www.sarathg.me/osint.html" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-003</span>
+        <span class="status-tag">METHODOLOGY GUIDE</span>
+      </div>
+      <h3>OSINT Guide — 2026 Edition</h3>
+      <p>A hands-on open-source intelligence guide covering people investigation, image forensics, geolocation, dark web monitoring, and CTI workflows. Built for practitioners, updated for 2026.</p>
+      <div class="card-bottom">
+        <span class="stack">OSINT · Investigation · CTI</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="https://parallax.sarathg.me/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-004</span>
+        <span class="status-tag">SIMULATION</span>
+      </div>
+      <h3>Parallax</h3>
+      <p>Browser-based cybersecurity training platform with dual-role simulations — experience the same breach as both attacker and SOC defender across six real-world scenarios.</p>
+      <div class="card-bottom">
+        <span class="stack">Blue Team · Red Team</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="https://secretguard.github.io/blockchainlab/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-005</span>
+        <span class="status-tag">VISUAL EXPLAINER</span>
+      </div>
+      <h3>Blockchain Learning Lab</h3>
+      <p>Interactive visual blockchain explorer with live hash calculation and block tampering simulation. Teaches core concepts intuitively.</p>
+      <div class="card-bottom">
+        <span class="stack">Cryptography · Interactive UI</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- AWARENESS & SOCIAL ENGINEERING DEMOS -->
+<section class="lab-section" data-category="awareness">
+  <div class="section-rule">
+    <span class="label mono">AWARENESS &amp; SOCIAL ENGINEERING DEMOS</span>
+    <span class="line"></span>
+    <span class="count mono">02</span>
+  </div>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="https://pdf.sarathg.me/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-006</span>
+        <span class="status-tag">PHISHING POC</span>
+      </div>
+      <h3>Chameleon (Tabnabbing PoC)</h3>
+      <p>Demonstrates tabnabbing attack risks. Used as a training aid in corporate security sessions to illustrate credential harvesting from hijacked tabs.</p>
+      <div class="card-bottom">
+        <span class="stack">HTML/JS · Phishing PoC</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="https://freeticket.sarathg.me/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-007</span>
+        <span class="status-tag">PHISHING SIM</span>
+      </div>
+      <h3>Free Movie Ticket</h3>
+      <p>Simulated phishing environment demonstrating how psychological triggers bypass technical controls during security awareness training drills.</p>
+      <div class="card-bottom">
+        <span class="stack">Social Engineering</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- SECURITY AUTOMATION TOOLS -->
+<section class="lab-section" data-category="automation">
+  <div class="section-rule">
+    <span class="label mono">SECURITY AUTOMATION TOOLS</span>
+    <span class="line"></span>
+    <span class="count mono">01</span>
+  </div>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="https://github.com/secretguard/web-recon" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-008</span>
+        <span class="status-tag">AUTOMATION SCRIPT</span>
+      </div>
+      <h3>Web Recon</h3>
+      <p>Automated vulnerability analysis framework. Reduced manual recon time by ~30% through centralized asset discovery and scanning dashboards.</p>
+      <div class="card-bottom">
+        <span class="stack">Shell · Python · Nmap</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- OTHER PROJECTS -->
+<section class="lab-section" data-category="other">
+  <div class="section-rule">
+    <span class="label mono">OTHER PROJECTS</span>
+    <span class="line"></span>
+    <span class="count mono">01</span>
+  </div>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="https://tv.sarathg.me/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <span class="lab-id">LAB-009</span>
+        <span class="status-tag">SIDE PROJECT</span>
+      </div>
+      <h3>vyu</h3>
+      <p>Live TV streaming for global channels with advanced content filtering and rapid auto-switching capabilities. Not security-related — included for completeness.</p>
+      <div class="card-bottom">
+        <span class="stack">Streaming · Web Interface</span>
+        <span class="go">OPEN &rarr;</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<footer>
+  <span class="mono">&copy; 2026 Sarath G &mdash; <a href="https://www.sarathg.me" target="_blank" rel="noopener">sarathg.me</a></span>
+  <span class="mono"><a href="https://www.sarathg.me/booking.html" target="_blank" rel="noopener">Book a session &rarr;</a></span>
+</footer>
+
+<script>
+  const pills=document.querySelectorAll('.filter-pill');
+  const sections=document.querySelectorAll('.lab-section');
+
+  pills.forEach(pill=>{
+    pill.addEventListener('click',()=>{
+      pills.forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      const filter=pill.dataset.filter;
+
+      sections.forEach(section=>{
+        if(filter==='all' || section.dataset.category===filter){
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
