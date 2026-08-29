@@ -313,6 +313,106 @@
 
   .hidden{display:none !important;}
 
+
+  /* ---------- 1:1 mentorship CTA ----------
+     Inline, at the end of the lab list and above the footer. Never a popup or
+     a sticky bar: the topbar here is already position:sticky, and a bottom bar
+     sits where mobile browser chrome lives.
+
+     Mint #4fffb0 is the mentorship colour across sarathg.me (navbar.js paints
+     the "1:1 Mentorship" nav link with it), so it is reused here rather than
+     this page's amber --signal: the offer should read as the same thing on
+     every domain. Everything else uses this page's own tokens so the panel
+     still belongs here.
+
+     Measured on --panel #151916: --paper 14.22:1, --steel 5.79:1,
+     mint 13.75:1, button label #062117 on mint 13.14:1, button fill vs panel
+     13.75:1 (WCAG 1.4.11). --steel-dim is deliberately NOT used anywhere in
+     this block: it lands at 2.90:1 on the panel and would fail AA. */
+  .coach-cta{
+    --coach-mint:#4fffb0;
+    --coach-mint-hi:#7cffc6;
+    --coach-on-mint:#062117;
+    max-width:920px;
+    margin:0 auto;
+    padding:0 32px 8px;
+  }
+  .coach-panel{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-left:3px solid var(--coach-mint);
+    border-radius:4px;
+    padding:24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .coach-copy{flex:1 1 380px;min-width:0;}
+  .coach-eyebrow{
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--coach-mint);
+    margin-bottom:9px;
+  }
+  .coach-panel h2{
+    font-size:20px;
+    font-weight:600;
+    line-height:1.25;
+    letter-spacing:-0.01em;
+    color:var(--paper);
+    margin-bottom:8px;
+  }
+  .coach-panel p{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--steel);
+    max-width:62ch;
+  }
+  .coach-note{font-size:13px;margin-top:12px;}
+  .coach-btn{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:48px;
+    padding:13px 24px;
+    background:var(--coach-mint);
+    color:var(--coach-on-mint);
+    border:1px solid var(--coach-mint);
+    border-radius:3px;
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+  }
+  .coach-btn:hover,.coach-btn:focus-visible{
+    background:var(--coach-mint-hi);
+    border-color:var(--coach-mint-hi);
+    color:var(--coach-on-mint);
+  }
+  .coach-btn:focus-visible{outline:2px solid var(--coach-mint);outline-offset:3px;}
+  @media (prefers-reduced-motion:no-preference){
+    .coach-btn{transition:background-color .18s ease,border-color .18s ease;}
+    .coach-arrow{display:inline-block;transition:transform .18s ease;}
+    .coach-btn:hover .coach-arrow{transform:translateX(3px);}
+  }
+  @media (max-width:600px){
+    .coach-cta{padding:0 20px 8px;}
+    .coach-panel{
+      padding:20px;
+      border-left:1px solid var(--panel-border);
+      border-top:3px solid var(--coach-mint);
+    }
+    .coach-btn{width:100%;}
+  }
+  @media (forced-colors:active){
+    .coach-panel{border:1px solid CanvasText;}
+    .coach-btn{border:1px solid ButtonText;}
+  }
 </style>
 </head>
 <body>
@@ -540,6 +640,20 @@
   </div>
 </section>
 
+<!-- ---------- 1:1 mentorship CTA ---------- -->
+<aside class="coach-cta" aria-labelledby="coach-h">
+  <div class="coach-panel">
+    <div class="coach-copy">
+      <div class="coach-eyebrow mono">1:1 Mentorship</div>
+      <h2 id="coach-h">Stuck applying this on your own?</h2>
+      <p>I run 1:1 mentorship for exactly this. One learner, one plan, built from a
+        diagnosis of where you actually are. Complete beginners included.</p>
+      <p class="coach-note">Free intake call. Nothing gets booked or charged.</p>
+    </div>
+    <a class="coach-btn" href="https://sarathg.me/coaching/" data-cta="labs-coaching">
+      See how it works <span class="coach-arrow" aria-hidden="true">&rarr;</span></a>
+  </div>
+</aside>
 <footer>
   <span class="mono">&copy; 2026 Sarath G &mdash; <a href="https://sarathg.me" target="_blank" rel="noopener">sarathg.me</a></span>
   <span class="mono"><a href="https://meet.sarathg.me/" target="_blank" rel="noopener">Book a session &rarr;</a></span>
